@@ -109,32 +109,73 @@ function fromJSON(proto, json) {
  */
 
 const cssSelectorBuilder = {
-  element(/* value */) {
-    throw new Error('Not implemented');
+  selector: '',
+
+  element(value) {
+    this.throwError(1);
+    const obj = Object.create(this);
+    obj.order = 1;
+    obj.selector += value;
+    return obj;
   },
 
-  id(/* value */) {
-    throw new Error('Not implemented');
+  id(value) {
+    this.throwError(2);
+    const obj = Object.create(this);
+    obj.order = 2;
+    obj.selector += `#${value}`;
+    return obj;
   },
 
-  class(/* value */) {
-    throw new Error('Not implemented');
+  class(value) {
+    this.throwError(3);
+    const obj = Object.create(this);
+    obj.order = 3;
+    obj.selector += `.${value}`;
+    return obj;
   },
 
-  attr(/* value */) {
-    throw new Error('Not implemented');
+  attr(value) {
+    this.throwError(4);
+    const obj = Object.create(this);
+    obj.order = 4;
+    obj.selector += `[${value}]`;
+    return obj;
   },
 
-  pseudoClass(/* value */) {
-    throw new Error('Not implemented');
+  pseudoClass(value) {
+    this.throwError(5);
+    const obj = Object.create(this);
+    obj.order = 5;
+    obj.selector += `:${value}`;
+    return obj;
   },
 
-  pseudoElement(/* value */) {
-    throw new Error('Not implemented');
+  pseudoElement(value) {
+    this.throwError(6);
+    const obj = Object.create(this);
+    obj.order = 6;
+    obj.selector += `::${value}`;
+    return obj;
   },
 
-  combine(/* selector1, combinator, selector2 */) {
-    throw new Error('Not implemented');
+  combine(selector1, combinator, selector2) {
+    const obj = Object.create(this);
+    obj.selector = `${selector1.selector} ${combinator} ${selector2.selector}`;
+    return obj;
+  },
+
+  stringify() {
+    return this.selector;
+  },
+
+  throwError(props) {
+    if (this.order === props && (props === 1 || props === 2 || props === 6)) {
+      throw new Error('Element, id and pseudo-element should not occur more then one time inside the selector');
+    }
+    if (this.order > props) {
+      throw new Error('Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element');
+    }
   },
 };
 
