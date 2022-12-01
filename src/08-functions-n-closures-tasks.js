@@ -83,7 +83,7 @@ function getPolynom(...args) {
  */
 function memoize(func) {
   let x;
-  return function (y) {
+  return (y) => {
     if (x) return x;
     x = func(y);
     return x;
@@ -146,7 +146,6 @@ function retry(func, attempts) {
  */
 function logger(func, logFunc) {
   return (...arg) => {
-    console.log(arg);
     const stringArg = arg.map((e) => JSON.stringify(e)).join(',');
     logFunc(`${func.name}(${stringArg}) starts`);
     const result = func(...arg);
